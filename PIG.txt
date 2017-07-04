@@ -1,0 +1,27 @@
+grunt> history
+1 top 5 employees
+
+   EMP_Details = LOAD '/home/acadgild/anil/Pig_Assignments/employee_details.txt' USING PigStorage(',') AS (emp_id:int, emp_name:chararray,emp_sal:int,emp_rating:int);
+   ORD_DESC = ORDER EMP_Details by emp_rating DESC;
+  TOP_5 = limit ORD_DESC 5;
+
+4   EMP_Details = LOAD '/home/acadgild/anil/Pig_Assignments/employee_details.txt' USING PigStorage(',') AS (emp_id:int,emp_name:chararray,emp_sal:int,emp_rating:int);
+5   STORE TOP_5 into '/home/acadgild/anil/Pig_Assignments/Top5_Employes.txt';
+6   TOP3_ODD = FILTER ORD_DESC BY emp_id/2 == 1;
+7   TOP3_ODD = FOREACH ORD_DESC GENERATE emp_id,emp_name,emp_sal,emp_rating , emp_id%2;
+8   TOP3_ODD = FILTER ORD_DESC BY emp_id%2 == 1;
+9   TOP_ODD3 = limit TOP3_ODD 3;
+10   ORD_DESC_SAL = ORDER EMP_Details by emp_sal DESC;
+11   ODD_EMP = FILTER ORD_DESC_SAL by emp_id%2 == 1;
+12   TOp3_EMP_ODD = limit ODD_EMP 3;
+
+
+list of employees in both relations
+
+1   EMP_DET = LOAD '/home/acadgild/anil/Pig_Assignments/employee_details.txt' USING PigStorage(',') AS(emp_id:int,emp_name:chararray,emp_sal:int,emp_rating:int);
+2   EMP_EXP = LOAD '/home/acadgild/anil/Pig_Assignments/employee_expenses.txt' USING PigStorage('\t') AS(emp_id:int,emp_exp:int);
+3   JOIN_REL = JOIN EMP_DET BY emp_id , EMP_EXP BY emp_id;
+4   RES_REL = FOREACH JOIN_REL GENERATE EMP_DET.emp_id , EMP_DET.emp_name;
+5   RES_REL = FOREACH JOIN_REL GENERATE (int) $1 as emp_id , (chararray) $2 as emp_name;
+6   RES_REL = FOREACH JOIN_REL GENERATE (int) $0 as emp_id , (chararray) $1 as emp_name;
+grunt>
